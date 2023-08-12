@@ -52,7 +52,8 @@ import {
     updateDateAsignadoAsigVINS,
     updateDateAsignadoAsigVINS2,
     cancel_vin_factura,
-    all_summary_vins
+    all_summary_vins,
+    get_patio_ubicaciones
 } from "../controllers/orden_de_compra.controller"
 
 const router = Router();
@@ -76,6 +77,7 @@ router.post("/asignarvins/send_pdf",send_pdf_status);
 router.post("/asignarvins/get_ordenes_de_compra", get_ordenes_de_compra);
 router.post("/asignarvins/get_vins_to_orden_compra", get_vins_to_orden_compra);
 router.post("/asignarvins/get_statustyt_catalogo", get_statustyt_catalogo);
+router.post("/asignarvins/get_patios_ubicaciones", get_patio_ubicaciones);
 router.post("/asignarvins/create_vins_with_orden_compra", create_vins_with_orden_compra);
 router.patch("/asignarvins/update_vins_with_orden_compra", update_vins_with_orden_compra);
 router.delete("/asignarvins/delete_vins_of_orden_compra", delete_vins_of_orden_compra);

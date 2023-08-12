@@ -146,5 +146,6 @@ export const storedProcedures = {
     spf_AsignacionVinsCancelFolioFact_actualizar        : `spf_AsignacionVinsCancelFolioFact_actualizar`,
     spf_logisticaVinsToStatusClientesTodos_leer         : `spf_logisticaVinsToStatusClientesTodos_leer`,
     spf_AsigLotesNombreBloque_actualizar                : `spf_AsigLotesNombreBloque_actualizar`,
+    spf_patiosUbicaciones_leer                          : `spf_patiosUbicaciones_leer`,
 
 }

@@ -716,7 +716,8 @@ export const update_vins_with_status = async ( req, res ) => {
         FechaAceptacionGPS, 
         EstatusGPS, 
         EstatusPrevia, 
-        EstatusTyT, 
+        EstatusTyT,
+        Patio, 
         FechaEntregaCliente,  
         FechaDeEnvioDocum,  
         FechaDeRecepcion,  
@@ -768,6 +769,7 @@ export const update_vins_with_status = async ( req, res ) => {
     }
 
     const ValidatedEstatusTyT = EstatusTyT.toString().split("|").pop() == 0 ? '1' : EstatusTyT.toString().split("|").pop();
+    const ValidatedPatio      = Patio.toString().split("|").pop();
    
     try {
         const pool = await getConnection();
@@ -780,6 +782,7 @@ export const update_vins_with_status = async ( req, res ) => {
                 .input("EstatusPrevia",         sql.VarChar,    EstatusPrevia)
                 // .input("EstatusTyT",            sql.Int,        EstatusTyT.toString().split("|").pop()) 
                 .input("EstatusTyT",            sql.Int,        ValidatedEstatusTyT) 
+                .input("Patio",                 sql.Int,        ValidatedPatio) 
                 .input("FechaEntregaCliente",   sql.Date,       FechaEntregaCliente === emptyString ? defaultDate : FechaEntregaCliente.toString().substring( 0,10 )) 
                 .input("FechaDeEnvioDocum",     sql.Date,       FechaDeEnvioDocum === emptyString ? defaultDate : FechaDeEnvioDocum.toString().substring( 0,10 )) 
                 .input("FechaDeRecepcion",      sql.Date,       FechaDeRecepcion === emptyString ? defaultDate : FechaDeRecepcion.toString().substring( 0,10 )) 
@@ -1061,6 +1064,25 @@ export const get_statustyt_catalogo = async ( req, res ) => {
             .input("Empresa",       sql.Int, Empresa)
             .input("Sucursal",      sql.Int, Sucursal)
             .execute( storedProcedures.spf_EstatusTyTCatalogo_leer )
+            res.json(result.recordset)
+
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+
+}
+
+export const get_patio_ubicaciones = async ( req, res ) => {
+    const { agencia:{ Empresa, Sucursal } } = req.body;
+
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input("Empresa",       sql.Int, Empresa)
+            .input("Sucursal",      sql.Int, Sucursal)
+            
+            .execute( storedProcedures.spf_patiosUbicaciones_leer )
             res.json(result.recordset)
 
     } catch (error) {
@@ -1666,7 +1688,7 @@ export const all_summary_vins = async ( req, res ) => {
                 dataList = [ ...dataList, { ...obj }];
             
 
-        }
+            }
 
         res.json(dataList);
 
