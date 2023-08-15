@@ -12,6 +12,8 @@ export const getClientes = async ( req, res ) => {
         .input("Sucursal",     sql.Int,     Sucursal)
         .execute( storedProcedures.spf_clientesFlotillas_leer )
 
+        // pool.close(); /* no cerrar la conexión en este endpoint. lanza error */
+
         res.json(result.recordset)
 
     } catch (error) {
@@ -32,6 +34,8 @@ export const getClientesCatalog = async ( req, res ) => {
         .input("orderByRazon",  sql.VarChar,   orderByRazon)
         .execute( storedProcedures.spf_clientesFlotillas_leer )
 
+        pool.close();
+
         res.json(result.recordset)
 
     } catch (error) {
@@ -50,6 +54,9 @@ export const getClientesOrderedByPurchaseOrder = async ( req, res ) => {
           .input("Sucursal", sql.Int, Sucursal)
           // .query(cuery)
           .execute( storedProcedures.spf_clientesFlotillasOrdered_leer )
+
+          pool.close();
+
           res.json(result.recordset)
   
       } catch (error) {
@@ -76,6 +83,9 @@ export const updateClientes = async ( req, res ) => {
         .input("FanCliente",     sql.VarChar,   FanCliente)
         // .query(cuery)
         .execute( storedProcedures.spf_clientesFlotillas_actualizar )
+
+        pool.close();
+
         res.json({isUpdated: true})
 
     } catch (error) {
@@ -104,6 +114,9 @@ export const createClientes = async ( req, res ) => {
         .input("FanCliente",    sql.VarChar,  FanCliente)
         // .query( cuery )
         .execute( storedProcedures.spf_clientesFlotillas_crear );
+
+        pool.close();
+
         res.json({ isCreated: true })
 
     } catch (error) {
@@ -121,6 +134,8 @@ export const contactsTypes = async ( req, res ) => {
         const pool = await getConnection()
         const result = await pool.request()
             .execute( storedProcedures.spf_TiposContactosCompraFlotillas_leer );
+
+            pool.close();
 
             res.json(result.recordset)        
         
@@ -140,6 +155,8 @@ export const purchaseContacts = async ( req, res ) => {
             .input("Sucursal",      sql.Int,     Sucursal)
             .input("NumeroCliente", sql.Int,     clientNumber)
             .execute( storedProcedures.spf_contactosCompraFlotillas_leer );
+
+            pool.close();
 
             res.json(result.recordset)
         
@@ -161,6 +178,7 @@ export const deleteContacts = async ( req, res ) => {
                 .input("numeroCliente",  sql.Int,   numeroCliente)
                 .execute( storedProcedures.spf_contactosEntregaClientesFlot_eliminar )    
        
+                pool.close();
 
         res.json({ "isDeleted" : true }); 
         
@@ -191,6 +209,7 @@ export const createContacts = async ( req, res ) => {
             
         }
        
+        pool.close();
 
         res.json({ "isCreated" : true }); 
 

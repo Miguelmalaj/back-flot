@@ -19,7 +19,10 @@ export const getNombresLotesCliente = async ( req, res ) => {
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesNombresLotesCliente_leer );
 
+            pool.close();
+
             res.json(result.recordset)
+
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -42,7 +45,10 @@ export const getLoteCliente = async ( req, res ) => {
             // .query(cuery)
             .execute( storedProcedures.spf_asigRefLoteClienteReferencia_leer )
 
+            pool.close();
+
             res.json(result.recordset)
+
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -55,18 +61,21 @@ export const updateLoteCliente = async ( req, res ) => {
     // const cuery = querys.updateReferenciaLoteCliente;
 
     try {
+
         const pool = await getConnection();
+
         for (const registro of lote) {
             await pool.request()
-            .input("Empresa", sql.Int, Empresa)
-            .input("Sucursal", sql.Int, Sucursal)
-            .input("Folio_lote", sql.Int, registro.Folio_lote)
-            .input("VIN", sql.VarChar, registro.VIN)
+            .input("Empresa",    sql.Int,     Empresa)
+            .input("Sucursal",   sql.Int,     Sucursal)
+            .input("Folio_lote", sql.Int,     registro.Folio_lote)
+            .input("VIN",        sql.VarChar, registro.VIN)
             .input("Referencia", sql.VarChar, registro.Referencia)
             // .query(cuery)    
             .execute( storedProcedures.spf_asigRefReferenciaLoteCliente_actualizar )    
         }
         
+        pool.close();
 
         res.json({"isUpdated": true})
         

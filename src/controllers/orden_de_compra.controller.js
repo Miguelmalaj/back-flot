@@ -51,6 +51,7 @@ export const get_tipovehiculos = async ( req,res ) => {
             // .query( cuery );
             // .execute( storedProcedures.spf_descripTipoVehiculos_leer );
             .execute( storedProcedures.spf_tipoVehiculosFlotillas_leer );
+
             res.json(result.recordset);
 
     } catch (error) {
@@ -415,6 +416,7 @@ export const get_orden_compra = async (req,res) => {
     } catch (error) {
         res.status(500);
         res.send(error.message);  
+        console.log(error.message);
     }
 }
 
@@ -433,8 +435,11 @@ export const send_pdf = async ( req, res ) => {
             // .query( cuery );
             .execute( storedProcedures.spf_ordenCompraPDFById_leer );
 
+            pool.close();
+
         if ( result.recordset.length > 0 ) buffer = result.recordset[0].DocumentoPDF;
         res.set('Content-Type', 'application/pdf')
+
         res.send(buffer)
 
     } catch (error) {
@@ -457,10 +462,12 @@ export const send_pdf_status = async ( req, res ) => {
             .input("VIN",       sql.VarChar,   VIN)
             .input("PDF",       sql.VarChar,   PDF)
             .execute( storedProcedures.spf_logisticaVinsToStatusPDF_leer )
+            
             pool.close();
         
             if ( result.recordset.length > 0 ) buffer = result.recordset[0].DocPDF;
             res.set('Content-Type', 'application/pdf')
+
             res.send(buffer)
             
     } catch (error) {
@@ -709,8 +716,11 @@ export const update_vins_with_status_recibo_factura = async ( req, res ) => {
 
 export const update_vins_with_status = async ( req, res ) => {
     const { Empresa, Sucursal } = JSON.parse(req.body.agencia);
+
     const { user } = JSON.parse(req.body.user);
+
     const body = JSON.parse(req.body.body);
+
     const { 
         FechaSolicitudGPS, 
         FechaAceptacionGPS, 
@@ -770,7 +780,7 @@ export const update_vins_with_status = async ( req, res ) => {
 
     const ValidatedEstatusTyT = EstatusTyT.toString().split("|").pop() == 0 ? '1' : EstatusTyT.toString().split("|").pop();
     const ValidatedPatio      = Patio.toString().split("|").pop();
-   
+
     try {
         const pool = await getConnection();
             await pool.request()
@@ -782,7 +792,7 @@ export const update_vins_with_status = async ( req, res ) => {
                 .input("EstatusPrevia",         sql.VarChar,    EstatusPrevia)
                 // .input("EstatusTyT",            sql.Int,        EstatusTyT.toString().split("|").pop()) 
                 .input("EstatusTyT",            sql.Int,        ValidatedEstatusTyT) 
-                .input("Patio",                 sql.Int,        ValidatedPatio) 
+                .input("Patio",                 sql.Int,        ValidatedPatio == 'PATIO' ? 1 : ValidatedPatio) 
                 .input("FechaEntregaCliente",   sql.Date,       FechaEntregaCliente === emptyString ? defaultDate : FechaEntregaCliente.toString().substring( 0,10 )) 
                 .input("FechaDeEnvioDocum",     sql.Date,       FechaDeEnvioDocum === emptyString ? defaultDate : FechaDeEnvioDocum.toString().substring( 0,10 )) 
                 .input("FechaDeRecepcion",      sql.Date,       FechaDeRecepcion === emptyString ? defaultDate : FechaDeRecepcion.toString().substring( 0,10 )) 
@@ -835,7 +845,8 @@ export const update_vins_with_status = async ( req, res ) => {
     } catch (error) {
         res.status(500);
         res.send(error.message);
-        console.log(error);
+
+        console.log(error.message);
        
     }
 

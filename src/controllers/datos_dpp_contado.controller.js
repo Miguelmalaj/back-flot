@@ -13,6 +13,9 @@ export const getVinsCliente = async ( req, res ) => {
             .input("Sucursal", sql.Int, Sucursal)
             .input("NumCliente", sql.Int, NumCliente)
             .execute(storeProcedure)
+
+            pool.close();
+            
             res.json(result.recordset)
         
     } catch (error) {
@@ -132,7 +135,8 @@ export const createPermisoDesvio = async ( req, res ) => {
             .execute( storedProcedures.spf_creditoClienteFlotillas_actualizar )
         }
 
-        pool.close()
+        pool.close();
+
         res.json({
             "isCreated":true,
             "vinsToUpdateList": vinsToUpdateList
@@ -266,6 +270,8 @@ export const updatePermisoDesvio = async ( req, res ) => {
         /* const parametersObj = {data, pool, agencia}
         await updateEarlierPermisoDesvio( parametersObj ) */
 
+        pool.close();
+
         res.json({"isUpdated":true})
 
     } catch (error) {
@@ -293,7 +299,9 @@ export const getVinsClientToCancel = async ( req, res ) => {
             .input("FolioDesvio",   sql.VarChar, `${folioDesvio}`.toUpperCase())
             .input("FolioDPP",      sql.VarChar, folioDPP)
             .execute( storedProcedures.spf_logisticaVinsToExtPermOrDPPS_leer )
+
             pool.close();
+
             res.json(result.recordset)
 
         
@@ -341,6 +349,7 @@ export const cancelFolioDesvio = async ( req, res ) => {
         } */
 
         pool.close();
+
         res.json({"isCanceled":true})
     
    } catch (error) {
@@ -373,8 +382,10 @@ export const getFoliosDesvioByCliente = async ( req, res ) => {
             .input("PermisoDesvio", sql.VarChar, permisoDesvio)
             // .query( cuery )
             .execute( cuery )
+
+            pool.close();
+
             res.json(result.recordset)
-            pool.close()
 
     } catch (error) {
         res.status(500);
@@ -412,7 +423,9 @@ export const getVinsClientToResumen = async ( req, res ) => {
             .input("FolioDPP",      sql.VarChar, FolioDPP)
             // .query( cuery )
             .execute( storedProcedures.spf_logisticaVinsToResumenByClient_leer )
+            
             pool.close();
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -449,7 +462,9 @@ export const getVinsClientToResumenPrint = async ( req, res ) => {
             .input("FolioDesvio",   sql.VarChar,    `${folio}`.toUpperCase()) 
             .input("FolioDPP",      sql.VarChar,    FolioDPP) 
             .execute( storedProcedures.spf_resumAllByCliente_leer )
+
             pool.close();
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -478,7 +493,9 @@ export const getvinsclientetoDPP2orExt = async ( req, res ) => {
             .input("FolioDesvio",   sql.VarChar, `${folioDesvio}`.toUpperCase())
             .input("FolioDPP",      sql.VarChar, folioDPP)
             .execute( storedProcedures.spf_datDPPVinsToExtPermOrDPPS_leer )
+
             pool.close();  
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -496,7 +513,9 @@ export const createDPPFase2 = async ( req, res ) => {
     // let cuery = querys.addDPPFase2LogisticaVINS;
 
     try {
+
         const pool = await getConnection();
+
         for (const obj of data) {
 
             const res = await pool.request()
@@ -578,7 +597,8 @@ export const createDPPFase2 = async ( req, res ) => {
                 
             } */
 
-        pool.close()
+        pool.close();
+
         res.json({ "isCreated": true, errorMessage})
         
     } catch (error) {
@@ -618,6 +638,7 @@ export const createExtensionPermiso = async ( req, res ) => {
                 // .query( cuery )
                 .execute( storedProcedures.spf_datDPPExtPermPDF_crear );
             }
+
             pool.close()
 
             res.json({"isCreated": true})
@@ -643,7 +664,9 @@ export const getFechasExtensionesByVIN = async( req, res ) => {
             .input("FolioDesvio",  sql.VarChar,  `${FolioDesvio}`.toUpperCase())
             // .query( cuery )
             .execute( storedProcedures.spf_extensionDatesByVin_leer )
+
             pool.close();
+
             res.json(result.recordset);
         
     } catch ( error ) {
@@ -668,6 +691,9 @@ export const downloadPDF = async( req, res ) => {
             .execute( storedProcedures.spf_PDFExtensionPermById_leer );
 
         if ( result.recordset.length > 0 ) buffer = result.recordset[0].DocumentoAdjunto;
+
+        
+       
         res.set('Content-Type', 'application/pdf')
         res.send(buffer)
 
@@ -688,7 +714,9 @@ export const datesPermisoDesvioByFolio = async( req, res ) => {
             .input("FolioDesvio",  sql.VarChar,  `${FolioDesvio}`.toUpperCase())
             .input("Cliente",      sql.Int,      Cliente)
             .execute( storedProcedures.spf_datesPermisoDesvioByFolio_leer )
+            
             pool.close();
+            
             res.json(result.recordset);
         
     } catch (error) {
@@ -708,7 +736,9 @@ export const datesPermisoDesvioByFolioDPP = async( req, res ) => {
             .input("FolioDPP",     sql.VarChar,  `${FolioDPP}`.toUpperCase())
             .input("Cliente",      sql.Int,      Cliente)
             .execute( storedProcedures.spf_datesPermisoDesvioByFolioDPP_leer )
+            
             pool.close();
+            
             res.json(result.recordset);
         
     } catch (error) {
@@ -730,8 +760,9 @@ export const get_ordenes_de_compra = async ( req, res ) => {
             .input("Num_cliente",   sql.Int,     Num_cliente)
             .execute( storedProcedures.spf_ordenesDeCompraByCliente_leer )
 
-            res.json(result.recordset)
             pool.close()
+
+            res.json(result.recordset)
         
     } catch (error) {
         res.status(500);
@@ -749,8 +780,10 @@ export const get_limite_credito = async ( req, res ) => {
             .input("Sucursal", sql.Int, Sucursal)
             .input("Num_cliente", sql.Int, numeroCliente)
             .execute( storedProcedures.spf_limiteCreditoByCliente_leer );
+            
+            pool.close();
+            
             res.json(result.recordset)
-            // pool.close()
 
     } catch (error) {
         res.status(500);
@@ -770,8 +803,10 @@ export const fechaDePago = async ( req, res ) => {
             .execute( storedProcedures.spf_datDPPFechaDePago_leer );
 
             const { fechaDePago } = result.recordset[0];
-            res.json(fechaDePago);
+            
             pool.close();
+
+            res.json(fechaDePago);
 
     } catch (error) {
         res.status(500);
@@ -790,6 +825,8 @@ export const datesByVIN = async ( req, res ) => {
         .input("Empresa",     sql.Int,     5)
         .input("Sucursal",    sql.Int,     1)
         .execute( storedProcedures.spf_datDPPFechasVIN_leer );
+
+        pool.close();
 
         res.json(result.recordset);
 
@@ -828,6 +865,8 @@ export const update_nuevos_campos = async ( req, res ) => {
             .input("FechaEntrega",     sql.Date,      perm.FechaEntrega) 
             .execute( storedProcedures.spf_datDPPLogisticaVINS_actualizar );
         }
+
+        pool.close();
 
         res.json({ "isUpdated" : true })
         

@@ -43,35 +43,37 @@ const updateLoteAsync = async ( lote, agencia, fecha, Folio_lote ) => {
 
     for (const registroLote of lote) {
 
-            await pool.request()
-                .input("Empresa",                       sql.Int,     Empresa)
-                .input("Sucursal",                      sql.Int,     Sucursal)
-                .input("Folio_lote",                    sql.Int,     Folio_lote)
-                .input("Fecha_elaboracion",             sql.VarChar, fecha)
-                .input("Nombre_cliente",                sql.VarChar, registroLote.Nombre_cliente)
-                .input("Nombre_lote",                   sql.VarChar, registroLote.Nombre_lote)
-                .input("VIN",                           sql.VarChar, registroLote.VIN)
-                .input("Numero_factura",                sql.VarChar, registroLote.Numero_factura)
-                .input("Tasa_porcentaje_enganche",      sql.Float,   registroLote.Tasa_porcentaje_enganche)
-                .input("Monto_total",                   sql.Float,   removerComas(registroLote.Monto_total))
-                .input("Inversion_inicial",             sql.Float,   removerComas(registroLote.Inversion_inicial))
-                .input("Precio_factura",                sql.Float,   removerComas(registroLote.Precio_factura))
-                .input("Orden_compra",                  sql.VarChar, registroLote.Orden_compra)
-                .input("Ubicacion_cliente",             sql.VarChar, registroLote.Ubicacion_cliente)
-                .input("Marca",                         sql.VarChar, registroLote.Marca)
-                .input("Unidad",                        sql.VarChar, registroLote.Unidad)
-                .input("NumCliente",                    sql.Int,     registroLote.NumCliente)
-                .input("Fecha_firma_contrato",          sql.Date,    registroLote.Fecha_firma_contrato)
-                .input("Referencia",                    sql.VarChar, registroLote.Referencia)
-                .input("Folio_compra_contrato",         sql.VarChar, registroLote.Folio_compra_contrato)
-                .input("Fecha_compra_contrato",         sql.Date,    registroLote.Fecha_compra_contrato)
-                .input("Monto_plan_piso",               sql.Float,   registroLote.Monto_plan_piso)
-                .input("Monto_deposito_cuenta_cheques", sql.Float,   registroLote.Monto_deposito_cuenta_cheques)
+        await pool.request()
+            .input("Empresa",                       sql.Int,     Empresa)
+            .input("Sucursal",                      sql.Int,     Sucursal)
+            .input("Folio_lote",                    sql.Int,     Folio_lote)
+            .input("Fecha_elaboracion",             sql.VarChar, fecha)
+            .input("Nombre_cliente",                sql.VarChar, registroLote.Nombre_cliente)
+            .input("Nombre_lote",                   sql.VarChar, registroLote.Nombre_lote)
+            .input("VIN",                           sql.VarChar, registroLote.VIN)
+            .input("Numero_factura",                sql.VarChar, registroLote.Numero_factura)
+            .input("Tasa_porcentaje_enganche",      sql.Float,   registroLote.Tasa_porcentaje_enganche)
+            .input("Monto_total",                   sql.Float,   removerComas(registroLote.Monto_total))
+            .input("Inversion_inicial",             sql.Float,   removerComas(registroLote.Inversion_inicial))
+            .input("Precio_factura",                sql.Float,   removerComas(registroLote.Precio_factura))
+            .input("Orden_compra",                  sql.VarChar, registroLote.Orden_compra)
+            .input("Ubicacion_cliente",             sql.VarChar, registroLote.Ubicacion_cliente)
+            .input("Marca",                         sql.VarChar, registroLote.Marca)
+            .input("Unidad",                        sql.VarChar, registroLote.Unidad)
+            .input("NumCliente",                    sql.Int,     registroLote.NumCliente)
+            .input("Fecha_firma_contrato",          sql.Date,    registroLote.Fecha_firma_contrato)
+            .input("Referencia",                    sql.VarChar, registroLote.Referencia)
+            .input("Folio_compra_contrato",         sql.VarChar, registroLote.Folio_compra_contrato)
+            .input("Fecha_compra_contrato",         sql.Date,    registroLote.Fecha_compra_contrato)
+            .input("Monto_plan_piso",               sql.Float,   registroLote.Monto_plan_piso)
+            .input("Monto_deposito_cuenta_cheques", sql.Float,   registroLote.Monto_deposito_cuenta_cheques)
 
-                // .query( cuery )
-                .execute( storedProcedures.spf_asigLotesNewLote_crear )
+            // .query( cuery )
+            .execute( storedProcedures.spf_asigLotesNewLote_crear )
         
     }
+
+    pool.close();
 
 }
 
@@ -90,6 +92,8 @@ const checkNombreLoteExist = async (nombreLote , agencia) => {
                 if ( (registro.Nombre_lote === nombreLote) && (registro.Referencia === '') ) existName = true;
             }
         }
+
+    pool.close();        
 
     return existName;
 }
@@ -124,6 +128,8 @@ const createLoteAsync = async(lote, agencia, fecha, Folio_lote) => {
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesNewLote_crear )
     }
+
+    pool.close();
 }
 
 export const getFoliosLotes = async ( req, res ) => {
@@ -139,6 +145,9 @@ export const getFoliosLotes = async ( req, res ) => {
             .execute( storedProcedures.spf_asigLotesNextFolioLote_leer )
             
             const Folio_lote = result.recordset[0].Folio_lote;
+
+            pool.close();
+
             res.json({"Folio_lote": Folio_lote}) 
 
     } catch (error) {
@@ -161,6 +170,8 @@ export const getVINSRegistered = async ( req, res ) => {
             .input("Ubicacion_cliente", sql.VarChar, ubicacion)
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesVinsRegisteredByCliente_leer );
+
+            pool.close();
 
             res.json(result.recordset)
     } catch (error) {
@@ -187,6 +198,8 @@ export const getNombresLotesCliente = async ( req, res ) => {
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesNombresLotesCliente_leer )
 
+            pool.close();
+
             res.json(result.recordset)
 
     } catch (error) {
@@ -212,6 +225,8 @@ export const getLoteCliente = async ( req, res ) => {
             // .query(cuery)
             .execute( storedProcedures.spf_asigLotesLoteCliente_leer )
 
+            pool.close();
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -236,6 +251,8 @@ export const getvinscliente = async ( req, res ) => {
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesVinsClienteLoteYDisponibles_leer );
 
+            pool.close();
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -258,6 +275,8 @@ export const getVinsDisponiblesCliente = async ( req, res ) => {
             .input("NumCliente", sql.Int, NumCliente)
             // .query( cuery )
             .execute( storedProcedures.spf_asigLotesVinsDisponibles_leer )
+
+            pool.close();
 
             res.json(result.recordset)
 
@@ -312,10 +331,12 @@ export const deleteLote = async ( req, res ) => {
             .input("Folio_lote", sql.Int, Folio_lote)
             .execute( storedProcedures.spf_asigLotesDeleteLote_eliminar )
 
-            res.json({
-                "isDeleted": true,
-                "data": mergeNewAndOldLote
-            })
+        pool.close();
+
+        res.json({
+            "isDeleted": true,
+            "data": mergeNewAndOldLote
+        })
 
     } catch (error) {
         res.status(500);
@@ -390,6 +411,8 @@ export const updateRegistrosOracle = async ( req, res ) => {
                 
 
             }
+
+            pool.close();
             
             res.json({'isUpdated':true});
 
@@ -418,6 +441,8 @@ export const nameAlreadyExists = async ( req, res ) => {
 
         if ( response.rowsAffected[0] > 0 ) exist = true;
         
+        pool.close();
+
         res.json({ "message" : exist })        
 
     } catch (error) {
@@ -444,6 +469,8 @@ export const changeNameBloq = async( req, res ) => {
         .input("anteriorNombreLote", sql.VarChar, anteriorNombreLote)
         .execute( storedProcedures.spf_AsigLotesNombreBloque_actualizar );
         
+        pool.close();
+
         res.json({"wasChanged" : true })
 
       } catch (error) {
@@ -525,12 +552,6 @@ const deleteVINSFromHistorial = async ( pool, Empresa, Sucursal ) => {
 
                 
                 if ( existVINHistFact.rowsAffected[0] > 0 ) {
-
-                    //TODO:
-                    // ## revisar si el vin existe en la tabla de VINSasignados
-                    // ## si existe: no realizar nada.
-                    // ## si no existe: eliminar el VIN de la tabla historial facturados.
-                    // ES PROBABLE QUE SE TENGAN QUE RETORNAR LOS VINS PORQUE EL ENDPOINT ES PATCH().
                     
                     const existVinAsigTable = await pool.request()
                         .input( "VIN", sql.VarChar, obj.serie )

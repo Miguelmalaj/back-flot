@@ -12,7 +12,11 @@ export const login = async ( req, res ) => {
             .input("Sucursal", sql.Int, Sucursal)
             // .query(querys.login);
             .execute( storedProcedures.spf_login_leer );
+            
             const objData = createDataUser(result.recordset)
+
+            pool.close();
+
             res.json(objData)
         
     } catch (error) {
@@ -33,7 +37,11 @@ export const loginDMSUsers = async ( req, res ) => {
             .input("Sucursal", sql.Int, Sucursal)
             // .query(querys.loginDMS)
             .execute( storedProcedures.spf_loginDMS_leer )
+            
             const objData = createDataUserDMS(result.recordset, Clave)
+            
+            pool.close();
+
             res.json(objData)
 
     } catch (error) {

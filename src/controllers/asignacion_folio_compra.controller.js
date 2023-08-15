@@ -23,6 +23,8 @@ export const getNombresLotesCliente =  async( req, res ) => {
             // .query( cuery )
             .execute( storedProcedures.spf_nombresLotesClienteFolioCompra_leer )
 
+            pool.close();
+
             res.json(result.recordset)
     } catch (error) {
         res.status(500);
@@ -49,6 +51,8 @@ export const getLoteCliente =  async( req, res ) => {
             if ( newResult.length > 0 ) {
                 newResult = calcularMontoEInversion(result.recordset);
             }
+
+            pool.close();
 
             res.json(newResult)
         
@@ -80,6 +84,7 @@ export const updateLoteCliente =  async( req, res ) => {
 
     try {
         const pool = await getConnection();
+        
         for (const registro of lote) {
             await pool.request()
             .input("Empresa",                       sql.Int,     Empresa)
@@ -96,6 +101,8 @@ export const updateLoteCliente =  async( req, res ) => {
             // .query(cuery)
             .execute( storedProcedures.spf_updateFolioDeCompraLoteCliente_actualizar )
         }
+
+        pool.close();
 
         res.json({"isUpdated": true})
 

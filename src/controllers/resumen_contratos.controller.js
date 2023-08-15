@@ -20,6 +20,8 @@ export const getNombresLotesCliente = async( req, res ) => {
             // .query( cuery )
             .execute( storedProcedures.spf_nomLotesByClienteResumen_leer )
 
+            pool.close();
+
             res.json(result.recordset)
         
     } catch (error) {
@@ -44,6 +46,9 @@ export const getLoteCliente = async( req, res) => {
             .input("NumCliente", sql.Int, NumCliente)
             // .query(cuery)
             .execute( storedProcedures.spf_loteClienteResumen_leer )
+
+            pool.close();
+            
             res.json(result.recordset)
         
     } catch (error) {
